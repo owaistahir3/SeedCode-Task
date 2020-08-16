@@ -17,7 +17,6 @@ function App() {
   const [chainHeader, setchainHeader] = useState("Loading...");
 
   const [SubscriptionData, setData] = useState([]);
-
   const [data, setValidatorData] = useState([]);
 
   const wsProvider = new WsProvider("wss://rpc.polkadot.io");
@@ -39,7 +38,7 @@ function App() {
         const chainHeader = api.rpc.chain.getHeader();
         // saving data from 5th api
         const currentIdx = api.query.session.currentIndex();
-        // const myvalData = [];
+        const myvalData = [];
 
         await api.rpc.chain.subscribeNewHeads((lastHeader) => {
           setData((prevData) => {
@@ -48,14 +47,12 @@ function App() {
             );
           });
         });
-        for (let i = 0; i <= 197; i++) {
-          data.push({
-            id: i,
-            validator: validators[i].join(),
-          });
-        }
-        console.log("myValData: ", data[0].validator[0]);
-        // setValidatorData(data);
+
+        setValidatorData(validators.map((item, key)=> ({
+          key: `${key}`,
+          id: `${key}`,
+          validators: `${item}`
+        })));
         console.log("Request Completed");
         console.log(validateCount.words[0]);
         setValidatorsCount(validateCount.words[0]);
@@ -76,14 +73,11 @@ function App() {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      className: "col_class",
     },
     {
       title: "Validators",
-      dataIndex: "validator",
-      key: "validator",
-      className: "col_class",
-      width: 150,
+      dataIndex: "validators",
+      key: "validators",
     },
   ];
   // let mydata = [];
@@ -97,19 +91,19 @@ function App() {
   // setValidatorData(mydata);
   // validatorsList = () => {};
 
-  // Array.isArray(validators) &&
-  //   validators.map((item, key) => {
-  //     console.log("===========>", key);
-  //     // console.log("================>", validatorBalances[item]);
-  //     data.push({
-  //       key: key,
-  //       id: key,
-  //       validators: item,
-  //     });
-  //   });
+  Array.isArray(validators) &&
+    validators.map((item, key) => {
+      console.log("===========>", key);
+      // console.log("================>", validatorBalances[item]);
+      data.push({
+        key: key,
+        id: key,
+        validators: item,
+      });
+    });
 
   // setValidatorData(mydata);
-
+  console.log('====>', data);
   return (
     <div className="app">
       <div className="app_header">
@@ -117,6 +111,20 @@ function App() {
       </div>
       <div className="app_body">
         {/*  We'll visualize stats here! */}
+        <div style={{ fontSize: 12, padding: "10px" }}>
+          <p>
+            <b>Validators Count: </b>
+            {validateCount}
+          </p>
+          <Table
+            size="small"
+            columns={columns}
+            dataSource={data}
+            bordered={true}
+            style={{ fontSize: 12 }}
+          />
+        </div>
+
         <div style={{ background: "#ECECEC", padding: "30px", fontSize: 12 }}>
           <Card
             title="Head Subscribtions"
@@ -127,34 +135,12 @@ function App() {
               {" "}
               <ol>
                 {SubscriptionData.map((item) => {
+                  console.log('======>', item);
                   return <li style={{ fontSize: 12 }}>{item}</li>;
                 })}
               </ol>
             </div>
           </Card>
-        </div>
-        <div
-          style={{
-            fontSize: 12,
-            padding: "30px",
-            background: "#ECECEC",
-            width: "auto",
-          }}
-        >
-          <p>
-            <b>Validators Count: </b>
-            {validateCount}
-          </p>
-          <div style={{ fontSize: 12, size: "small", scrollX: true }}>
-            {data?.length > 0 && (
-              <Table
-                size="small"
-                columns={columns}
-                dataSource={data}
-                bordered={true}
-              ></Table>
-            )}
-          </div>
         </div>
       </div>
     </div>
