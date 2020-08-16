@@ -1,7 +1,7 @@
 * {
   margin: 0;
   align-content: center;
-  font-size: small;
+  font-size: larger;
 }
 
 .app_header {
@@ -14,4 +14,8 @@
 
 .app_body {
   justify-content: space-around;
+  font-size: 12;
+}
+.col_class {
+  font-size: 12;
 }
